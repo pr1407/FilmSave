@@ -9,7 +9,7 @@
 ## ✨ Características Principales
 
 * **Crea Playlists:** Organiza tus películas en listas personalizadas (Ej: "Noche de Terror", "Clásicos de los 80", "Películas para llorar").
-* **Busca Películas:** Explora un amplio catálogo de películas [gracias a la API de TMDB, o la que estés usando].
+* **Busca Películas:** Explora un amplio catálogo de películas.
 * **Guarda Favoritos:** No vuelvas a olvidar esa película que te encantó.
 * **Diseño Intuitivo:** Una interfaz limpia y fácil de usar.
 * **Comparte:** [Próximamente] ¡Envía tus playlists a tus amigos con un simple enlace!
