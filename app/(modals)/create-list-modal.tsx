@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, TextInput, Button, Alert } from 'react-native';
+import { StyleSheet, TextInput, Button, Alert, Platform, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { View, Text } from '@/components/Themed';
 import { createPlaylist } from '@/services/api';
@@ -37,6 +37,7 @@ export default function CreateListScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Crear Nueva Lista</Text>
+      <Text style={styles.label}>Nombre</Text>
 
       <TextInput
         style={styles.input}
@@ -44,7 +45,8 @@ export default function CreateListScreen() {
         value={nombre}
         onChangeText={setNombre}
       />
-
+      <Text style={styles.label}>Descripcion</Text>
+      
       <TextInput
         style={[styles.input, { height: 80 }]}
         placeholder="Descripción"
@@ -53,7 +55,13 @@ export default function CreateListScreen() {
         multiline
       />
 
-      <Button title="Crear Lista" onPress={handleCreateList} />
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleCreateList}
+      >
+        <Text style={[styles.buttonText, { color: '#fff' }]}>Crear Lista</Text>
+      </TouchableOpacity>
+
     </View>
   );
 }
@@ -61,19 +69,46 @@ export default function CreateListScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 24,
     justifyContent: 'center',
-    padding: 20,
+    backgroundColor: '#161022',
   },
   title: {
     fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 20,
+    fontWeight: '700',
+    color: '#fff',
+    textAlign: 'center',
+    marginBottom: 8,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    height: 48,
+    width: '100%',
+    borderColor: '#2f2348',
+    backgroundColor: '#2f2348',
+    color: '#8171a3',
     borderRadius: 8,
-    padding: 10,
-    marginBottom: 10,
+    paddingHorizontal: 12,
+    paddingVertical: Platform.OS === 'ios' ? 12 : 8,
+    marginBottom: 16,
+    fontSize: 16,
+  },
+  button: {
+    backgroundColor: '#563d61ff',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 16,
+  },
+    label: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 4,
   },
 });

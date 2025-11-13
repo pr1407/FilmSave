@@ -5,7 +5,8 @@ import {
     StyleSheet,
     ActivityIndicator,
     ScrollView,
-    Alert, // 👈 Importar Alert para los mensajes
+    Alert,
+    TouchableOpacity, // 👈 Importar Alert para los mensajes
 } from 'react-native';
 import { useLocalSearchParams, useRouter, Link } from 'expo-router'; // 👈 Importar useRouter
 import {
@@ -32,7 +33,7 @@ import {
 } from '@/services/api';
 // 👈 Importar funciones de auth
 import { getSession } from '@/services/auth';
-
+import { Ionicons } from '@expo/vector-icons';
 
 export default function PlaylistDetail() {
     const { id } = useLocalSearchParams();
@@ -259,29 +260,53 @@ export default function PlaylistDetail() {
                                 </View>
 
                                 <View style={styles.buttons}>
+                                    {/* --- Botón de Visto/No Visto --- */}
                                     {(permission === 'owner' || permission === 2) && (
-                                    <Button
-                                        variant="outlined"
-                                        size="small"
-                                        color={movie.status ? 'success' : 'primary'}
-                                        onClick={() =>
-                                            handleToggleStatus(movie.peliculas.imdb_id, movie.status)
-                                        }
-                                    >
-                                        {movie.status ? 'Vista ✅' : 'No vista 👁️'}
-                                    </Button>
+                                        <TouchableOpacity
+                                            // Estilos condicionales
+                                            style={[
+                                                styles.buttonBase,
+                                                movie.status ? styles.buttonSuccess : styles.buttonPrimary
+                                            ]}
+                                            onPress={() =>
+                                                handleToggleStatus(movie.peliculas.imdb_id, movie.status)
+                                            }
+                                        >
+                                            {/* 1. Icono */}
+                                            <Ionicons
+                                                // Corregí 'eye' y 'eyeOff' a los nombres de string correctos
+                                                name={movie.status ? 'eye' : 'eye-off'}
+                                                size={18}
+                                                color={movie.status ? styles.textSuccess.color : styles.textPrimary.color}
+                                            />
+                                            {/* 2. Texto */}
+                                            <Text
+                                                style={[
+                                                    styles.textBase,
+                                                    movie.status ? styles.textSuccess : styles.textPrimary
+                                                ]}
+                                            >
+                                                {movie.status ? ' Vista' : ' No vista'}
+                                            </Text>
+                                        </TouchableOpacity>
                                     )}
 
-                                    {/* 👇 Solo dueños o editores pueden eliminar */}
+                                    {/* --- Botón de Eliminar --- */}
                                     {(permission === 'owner' || permission === 2) && (
-                                        <Button
-                                            variant="outlined"
-                                            size="small"
-                                            color="error"
-                                            onClick={() => handleDelete(movie.peliculas.imdb_id)}
+                                        <TouchableOpacity
+                                            style={[styles.buttonBase, styles.buttonError]}
+                                            onPress={() => handleDelete(movie.peliculas.imdb_id)}
                                         >
-                                            Eliminar
-                                        </Button>
+                                            {/* Añadí un icono para consistencia */}
+                                            <Ionicons
+                                                name="trash-outline"
+                                                size={18}
+                                                color={styles.textError.color}
+                                            />
+                                            <Text style={[styles.textBase, styles.textError]}>
+                                                {' Eliminar'}
+                                            </Text>
+                                        </TouchableOpacity>
                                     )}
                                 </View>
                             </CardContent>
@@ -293,7 +318,10 @@ export default function PlaylistDetail() {
     );
 }
 
-// ... (tus estilos de StyleSheet)
+const primaryColor = '#1976d2';
+const successColor = '#2e7d32';
+const errorColor = '#d32f2f';
+
 const styles = StyleSheet.create({
     // ... (todos tus estilos existentes)
     wrapper: {
@@ -361,9 +389,53 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#666',
     },
+
     buttons: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'space-between', // O 'space-around', o usa 'gap'
         marginTop: 10,
+        // Añade 'gap: 10,' si quieres espacio entre botones
     },
+    
+    // --- Estilos Base del Botón (simula outlined/small) ---
+    buttonBase: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 1,
+        borderRadius: 4,
+        paddingVertical: 5, // Simula size="small"
+        paddingHorizontal: 10, // Simula size="small"
+        minWidth: 100, // Asegura que los botones tengan un ancho similar
+    },
+    textBase: {
+        fontSize: 14,
+        fontWeight: '500',
+        marginLeft: 6, // Espacio entre icono y texto
+    },
+
+    // --- Estilos 'Primary' (No Vista) ---
+    buttonPrimary: {
+        borderColor: primaryColor,
+    },
+    textPrimary: {
+        color: primaryColor,
+    },
+
+    // --- Estilos 'Success' (Vista) ---
+    buttonSuccess: {
+        borderColor: successColor,
+    },
+    textSuccess: {
+        color: successColor,
+    },
+
+    // --- Estilos 'Error' (Eliminar) ---
+    buttonError: {
+        borderColor: errorColor,
+    },
+    textError: {
+        color: errorColor,
+    },
+
 });

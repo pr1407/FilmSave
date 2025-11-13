@@ -5,7 +5,8 @@ import {
     StyleSheet,
     ActivityIndicator,
     ScrollView,
-    Alert, // 👈 Importar Alert para los mensajes
+    Alert,
+    TouchableOpacity, // 👈 Importar Alert para los mensajes
 } from 'react-native';
 import { useLocalSearchParams, useRouter, Link } from 'expo-router'; // 👈 Importar useRouter
 import {
@@ -32,6 +33,7 @@ import {
 } from '@/services/api';
 // 👈 Importar funciones de auth
 import { getSession } from '@/services/auth';
+import { Ionicons } from '@expo/vector-icons';
 
 
 export default function PlaylistDetail() {
@@ -165,6 +167,7 @@ export default function PlaylistDetail() {
         setMovies((prev) => prev.filter((m) => m.peliculas.imdb_id !== imdbId));
     };
 
+
     // --- RENDERIZADO ---
 
     if (loading) {
@@ -190,50 +193,91 @@ export default function PlaylistDetail() {
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={true}
             >
-                <Text style={styles.title}>{playlist?.nombre}</Text>
+                <Text style={styles.title}>Playlist: {playlist?.nombre}</Text>
                 <Text style={styles.subtitleText}>{playlist?.descripcion}</Text>
+                <Text style={styles.subtitleText}>Agrega nuevas peliculas</Text>
 
-                {/* 👇 El permiso 'owner' o permiso '2' (editar) podrían ver este botón */}
-                {(permission === 'owner' || permission === 2) && (
-                    <Link href={`/(modals)/compartir-playlist-modal?id=${playlist.id}`} asChild>
-                        <Button variant="outlined">Compartir</Button>
-                    </Link>
-                )}
+                <View style={styles.separator}></View>
 
-                {(permission === 'owner' || permission === 2) && (
-                    <View style={styles.searchWrapper}>
-                        <TextField
-                            label="Buscar película"
-                            value={query}
-                            onChange={(e) => handleSearch(e.target.value)}
-                            fullWidth
-                            margin="normal"
-                        />
-                        {results.length > 0 && (
-                            <Paper elevation={3} style={styles.resultsOverlay}>
-                                <ScrollView style={styles.resultsScroll}>
-                                    <List>
-                                        {results.map((movie: any) => (
-                                            <ListItem
-                                                key={movie.imdbID}
-                                                button
-                                                onClick={() => handleAdd(movie)}
-                                            >
-                                                <img src={movie.Poster} width={40} />
-                                                <ListItemText
-                                                    primary={movie.Title}
-                                                    secondary={movie.Year}
-                                                />
-                                            </ListItem>
-                                        ))}
-                                    </List>
-                                </ScrollView>
-                            </Paper>
-                        )}
-                    </View>
-                )}
+                <View style={styles.buttonsRow}>
+                    {(permission === 'owner' || permission === 2) && (
+                        <View style={styles.searchWrapper}>
+                            <TextField
+                                label="Buscar peliculas para agregar"
+                                value={query}
+                                color="secondary"
+                                onChange={(e) => handleSearch(e.target.value)}
+                                fullWidth
+                                margin="normal"
+                                sx={{
+                                    backgroundColor: '#2f2348', // CSS simple
+                                    borderRadius: 2, // Accede al theme.spacing (1 * 8px = 8px)
+                                    '& .MuiInputLabel-root': {
+                                        color: '#8171a3', // Color del label en estado normal
+                                        fontSize: '0.9rem',
+                                    },
+                                }}
+                            />
+                            {results.length > 0 && (
+                                <Paper elevation={3} style={styles.resultsOverlay}>
+                                    <ScrollView style={styles.resultsScroll}>
+                                        <List>
+                                            {results.map((movie: any) => (
+                                                <ListItem
+                                                    key={movie.imdbID}
+                                                    button
+                                                    onClick={() => handleAdd(movie)}
+                                                >
+                                                    <img src={movie.Poster} width={40} />
+                                                    <ListItemText
+                                                        primary={movie.Title}
+                                                        secondary={movie.Year}
 
-                <Text style={styles.subtitle}>🎬 Películas en la lista</Text>
+                                                        // Estilos para el texto principal (movie.Title)
+                                                        primaryTypographyProps={{
+                                                            sx: {
+                                                                paddingLeft: 2,
+                                                                color: '#ffffff', // Color blanco
+                                                                fontWeight: 'bold',
+                                                                fontSize: '0.9rem',
+                                                            }
+                                                        }}
+
+                                                        // Estilos para el texto secundario (movie.Year)
+                                                        secondaryTypographyProps={{
+                                                            sx: {
+                                                                paddingLeft: 2,
+                                                                color: '#b0bec5', // Un gris claro
+                                                                fontSize: '0.8rem',
+                                                            }
+                                                        }}
+                                                    />
+                                                </ListItem>
+                                            ))}
+                                        </List>
+                                    </ScrollView>
+                                </Paper>
+                            )}
+                        </View>
+                    )}
+
+                    {(permission === 'owner' || permission === 2) && (
+                        <Link href={`/(modals)/compartir-playlist-modal?id=${playlist.id}`} asChild>
+                            <TouchableOpacity
+                                style={
+                                    styles.shareButton
+                                }>
+                                <Ionicons
+                                    name={'share'}
+                                    size={18}
+                                />
+                                <Text style={styles.textBaseShare}>Compartir</Text>
+                            </TouchableOpacity>
+                        </Link>
+                    )}
+                </View>
+
+                <Text style={styles.title}>🎬 Películas en esta Playlist</Text>
 
                 <View style={styles.grid}>
                     {movies.map((movie: any) => (
@@ -249,7 +293,6 @@ export default function PlaylistDetail() {
                                 height="300"
                                 image={movie.peliculas.poster_url || '/placeholder.png'}
                                 alt={movie.peliculas.titulo}
-                                style={{ /* ... (tus estilos) ... */ }}
                             />
 
                             <CardContent style={styles.cardContent}>
@@ -258,30 +301,51 @@ export default function PlaylistDetail() {
                                     <Text style={styles.movieYear}>{movie.peliculas.ano}</Text>
                                 </View>
 
+
                                 <View style={styles.buttons}>
                                     {(permission === 'owner' || permission === 2) && (
-                                    <Button
-                                        variant="outlined"
-                                        size="small"
-                                        color={movie.status ? 'success' : 'primary'}
-                                        onClick={() =>
-                                            handleToggleStatus(movie.peliculas.imdb_id, movie.status)
-                                        }
-                                    >
-                                        {movie.status ? 'Vista ✅' : 'No vista 👁️'}
-                                    </Button>
+                                        <TouchableOpacity
+                                            // Estilos condicionales
+                                            style={[
+                                                styles.buttonBase,
+                                                movie.status ? styles.buttonSuccess : styles.buttonPrimary
+                                            ]}
+                                            onPress={() =>
+                                                handleToggleStatus(movie.peliculas.imdb_id, movie.status)
+                                            }
+                                        >
+                                            <Ionicons
+                                                name={movie.status ? 'eye' : 'eye-off'}
+                                                size={18}
+                                                color={movie.status ? styles.textSuccess.color : styles.textPrimary.color}
+                                            />
+                                            <Text
+                                                style={[
+                                                    styles.textBase,
+                                                    movie.status ? styles.textSuccess : styles.textPrimary
+                                                ]}
+                                            >
+                                                {movie.status ? ' Vista' : ' No vista'}
+                                            </Text>
+                                        </TouchableOpacity>
                                     )}
 
-                                    {/* 👇 Solo dueños o editores pueden eliminar */}
+                                    {/* --- Botón de Eliminar --- */}
                                     {(permission === 'owner' || permission === 2) && (
-                                        <Button
-                                            variant="outlined"
-                                            size="small"
-                                            color="error"
-                                            onClick={() => handleDelete(movie.peliculas.imdb_id)}
+                                        <TouchableOpacity
+                                            style={[styles.buttonBase, styles.buttonError]}
+                                            onPress={() => handleDelete(movie.peliculas.imdb_id)}
                                         >
-                                            Eliminar
-                                        </Button>
+                                            {/* Añadí un icono para consistencia */}
+                                            <Ionicons
+                                                name="trash-outline"
+                                                size={18}
+                                                color={styles.textError.color}
+                                            />
+                                            <Text style={[styles.textBase, styles.textError]}>
+                                                {' Eliminar'}
+                                            </Text>
+                                        </TouchableOpacity>
                                     )}
                                 </View>
                             </CardContent>
@@ -292,13 +356,15 @@ export default function PlaylistDetail() {
         </View>
     );
 }
-
+const primaryColor = '#a18fc5';
+const successColor = '#a18fc5';
+const errorColor = '#a18fc5';
 // ... (tus estilos de StyleSheet)
 const styles = StyleSheet.create({
     // ... (todos tus estilos existentes)
     wrapper: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#161022',
     },
     scroll: {
         flex: 1,
@@ -307,19 +373,39 @@ const styles = StyleSheet.create({
         padding: 20,
         paddingBottom: 100,
     },
-    title: { fontSize: 22, fontWeight: 'bold', marginBottom: 10 },
-    subtitleText: { fontSize: 16, color: '#666', marginBottom: 20 },
-    searchWrapper: { position: 'relative', zIndex: 10 },
+    title: {
+        fontSize: 22,
+        color: '#ffffff',
+        fontWeight: 'bold',
+        marginBottom: 10
+    },
+    subtitleText: {
+        fontSize: 16,
+        color: '#a18fc5',
+        marginBottom: 20
+    },
+    searchWrapper:
+    {
+        flex: 1,
+        position: 'relative',
+        zIndex: 10,
+    },
     resultsOverlay: {
-        position: 'absolute',
-        top: 70,
+        position: 'absolute',  // Flota sobre el contenido
+        top: '100%',           // Se pone justo debajo del buscador
         left: 0,
         right: 0,
-        maxHeight: 300,
-        zIndex: 20,
+        zIndex: 100,            // Se asegura de estar por encima de otros elementos
+        marginTop: 8,      // Un pequeño espacio
+        backgroundColor: '#2f2348', // Mismo color del buscador
+        color: 'white',
+
     },
     resultsScroll: {
         maxHeight: 300,
+        overflowY: 'auto',
+        backgroundColor: '#2f2348',
+        color: '#fff'
     },
     subtitle: {
         fontSize: 22,
@@ -336,34 +422,105 @@ const styles = StyleSheet.create({
     },
     card: {
         width: 260,
-        borderRadius: 12,
-        backgroundColor: '#fff',
-        shadowColor: '#000',
-        shadowOpacity: 0.1,
-        shadowOffset: { width: 0, height: 4 },
-        shadowRadius: 8,
-        elevation: 4,
+        borderRadius: 20,
+        backgroundColor: '#161022',
     },
     cardContent: {
         padding: 12,
     },
     titleRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
     },
     movieTitle: {
         fontSize: 16,
         fontWeight: '600',
         flexShrink: 1,
+        color: '#ffffff'
+
     },
     movieYear: {
         fontSize: 14,
         color: '#666',
     },
-    buttons: {
+    buttonsRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: 10,
+        zIndex: 10,
+
+    },
+    buttons: {
+        flexDirection: 'row',
+        justifyContent: 'space-between', // O 'space-around', o usa 'gap'
         marginTop: 10,
     },
+
+    // --- Estilos Base del Botón (simula outlined/small) ---
+    buttonBase: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 1,
+        borderRadius: 4,
+        paddingVertical: 5, // Simula size="small"
+        paddingHorizontal: 10, // Simula size="small"
+        minWidth: 100, // Asegura que los botones tengan un ancho similar
+    },
+
+    shareButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderRadius: 4,
+        paddingVertical: 10, // Simula size="small"
+        paddingHorizontal: 12, // Simula size="small"
+        minWidth: 100, // Asegura que los botones tengan un ancho similar
+        backgroundColor: '#5b13ec',
+    },
+
+    textBaseShare: {
+        fontSize: 14,
+        fontWeight: '500',
+        marginLeft: 6, // Espacio entre icono y texto
+        color: '#ffffff',
+
+    },
+
+    textBase: {
+        fontSize: 14,
+        fontWeight: '500',
+        marginLeft: 6, // Espacio entre icono y texto
+    },
+
+    // --- Estilos 'Primary' (No Vista) ---
+    buttonPrimary: {
+        borderColor: primaryColor,
+    },
+    textPrimary: {
+        color: primaryColor,
+    },
+
+    // --- Estilos 'Success' (Vista) ---
+    buttonSuccess: {
+        borderColor: successColor,
+    },
+    textSuccess: {
+        color: successColor,
+    },
+
+    // --- Estilos 'Error' (Eliminar) ---
+    buttonError: {
+        borderColor: errorColor,
+    },
+    textError: {
+        color: errorColor,
+    },
+
+
+    separator: {
+        height: 1, // Thickness of the line
+        width: '100%', // Full width
+        backgroundColor: '#2f2348', // Color of the line
+        marginVertical: 10, // Adjust vertical spacing as needed
+    },
+
 });

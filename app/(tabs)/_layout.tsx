@@ -7,7 +7,6 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false, // Oculta el header *del TabNavigator*
-        // tabBarActiveTintColor: 'blue', // Puedes estilizarlo
       }}
     >
       <Tabs.Screen

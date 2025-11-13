@@ -11,7 +11,7 @@ import {
   Image,
 } from 'react-native';
 // ¡Importa signUpWithEmail!
-import { signUpWithEmail } from '../../services/auth'; 
+import { signUpWithEmail } from '../../services/auth';
 import { router } from 'expo-router';
 
 export default function SignUpScreen() {
@@ -46,7 +46,6 @@ export default function SignUpScreen() {
         '¡Registro Exitoso!',
         'Se ha enviado un correo de confirmación a tu email. Por favor, revísalo para activar tu cuenta.',
         [
-          // Botón para ir a login
           { text: 'OK', onPress: () => router.push('/(auth)/login') }
         ]
       );
@@ -55,62 +54,70 @@ export default function SignUpScreen() {
 
   return (
     <View style={styles.container}>
-      <Image 
-        source={require('../../assets/images/icon.png')} // Ajusta la ruta a tu logo
-        style={styles.logo}
-      />
-      
-      <Text style={styles.title}>Crear Cuenta</Text>
-      
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        placeholderTextColor="#888"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Contraseña"
-        placeholderTextColor="#888"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-        autoCapitalize="none"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Confirmar Contraseña"
-        placeholderTextColor="#888"
-        secureTextEntry
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-        autoCapitalize="none"
-      />
 
-      {/* Botón primario mejorado */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={handleSignUp} // Llama a la función correcta
-        disabled={loading}
-      >
-        {loading ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.buttonText}>Registrarme</Text>
-        )}
-      </TouchableOpacity>
+      <View style={styles.containerModule}>
+        <Image
+          source={require('../../assets/images/icon.png')} // Ajusta la ruta a tu logo
+          style={styles.logo}
+        />
+        <Text style={styles.title}>Crear Cuenta</Text>
+      </View>
 
-      {/* Botón secundario mejorado */}
+      <View style={styles.modalContainer}>
+        <Text style={styles.subtitleInput}>Email</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="you@example.com"
+          placeholderTextColor="#888"
+          keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
+        />
+        <Text style={styles.subtitleInput}>Contraseña</Text>
+
+        <TextInput
+          style={styles.input}
+          placeholder="********"
+          placeholderTextColor="#888"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+          autoCapitalize="none"
+        />
+        <Text style={styles.subtitleInput}>Confirmar Contraseña</Text>
+
+        <TextInput
+          style={styles.input}
+          placeholder="********"
+          placeholderTextColor="#888"
+          secureTextEntry
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          autoCapitalize="none"
+        />
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleSignUp} // Llama a la función correcta
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Registrarme</Text>
+          )}
+        </TouchableOpacity>
+      </View>
+
+
       <Pressable
         style={styles.secondaryButton}
         onPress={() => router.push('/(auth)/login')}
         disabled={loading}
       >
-        <Text style={styles.secondaryButtonText}>
-          ¿Ya tienes cuenta? Inicia sesión
+        <Text >
+          Ya tienes cuenta? <Text style={styles.secondaryButtonText}>Inicia sesión</Text>
         </Text>
       </Pressable>
     </View>
@@ -123,8 +130,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 24,
-    backgroundColor: '#fff', // Fondo blanco limpio
+    backgroundColor: '#f3f4f6', // Fondo blanco limpio
   },
+
+  containerModule: {
+    justifyContent: 'center',
+    backgroundColor: '#f3f4f6',
+    padding: 20// Fondo blanco limpio
+  },
+
+
   logo: {
     width: 100,
     height: 100,
@@ -135,23 +150,36 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 30,
     textAlign: 'center',
     color: '#111',
   },
+  subtitle: {
+    fontSize: 16,
+    marginBottom: 20,
+    textAlign: 'center',
+    color: '#6b7280',
+    
+  },
+
+  subtitleInput: {
+    fontSize: 16,
+    color: '#374151',
+        paddingBottom: 10,
+  },
+
   input: {
     height: 50,
-    borderColor: '#ddd',
+    borderColor: '#d1d5db',
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 15,
     marginBottom: 15,
-    backgroundColor: '#f9f9f9', // Ligero color de fondo
+    backgroundColor: '#f9fafb', // Ligero color de fondo
     fontSize: 16,
   },
   // Estilo para el botón primario
   button: {
-    backgroundColor: '#007AFF', // Color azul primario
+    backgroundColor: '#6366f1', // Color azul primario
     height: 50,
     borderRadius: 8,
     justifyContent: 'center',
@@ -169,7 +197,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   secondaryButtonText: {
-    color: '#007AFF',
+    color: '#6366f1',
     fontSize: 16,
+    fontWeight: 'bold',
+
   },
+
+  modalContainer: {
+    backgroundColor: '#ffffff', // Color azul primario
+    paddingHorizontal: 20,
+    paddingVertical: 30,
+    borderRadius: 12,
+  }
 });

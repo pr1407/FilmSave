@@ -1,5 +1,6 @@
 import { getUserPlaylists } from '@/services/api';
 import { getSession } from '@/services/auth';
+import { Ionicons } from '@expo/vector-icons';
 import {
   Button,
   Card,
@@ -26,9 +27,10 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
   borderRadius: 5,
+  backgroundColor: primaryColor,
   [`& .MuiLinearProgress-bar`]: {
     borderRadius: 5,
-    backgroundColor: '#1a90ff',
+    backgroundColor: '#3e355b',
   },
 }));
 
@@ -75,7 +77,7 @@ export default function IndexScreen() {
       const { session } = await getSession();
       const userId = session?.user?.id;
       if (!userId) {
-        setPlaylist([]); 
+        setPlaylist([]);
         return;
       }
 
@@ -85,7 +87,7 @@ export default function IndexScreen() {
     } catch (error) {
       console.error('Error al obtener playlists:', error);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
@@ -110,6 +112,9 @@ export default function IndexScreen() {
           sx={{
             margin: 2,
             borderRadius: 3,
+            backgroundColor: 'white',
+            borderWidth: 3,
+            borderColor: primaryColor,
             transition: 'all 0.3s ease',
             boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
             cursor: 'pointer',
@@ -133,7 +138,7 @@ export default function IndexScreen() {
             <Text style={styles.progressText}>{Math.round(progress)}%</Text>
           </CardContent>
           <CardActions sx={{ justifyContent: 'center' }}>
-            <Button
+            {/* <Button
               size="small"
               variant="outlined"
               onClick={(e) => {
@@ -142,7 +147,20 @@ export default function IndexScreen() {
               }}
             >
               Compartir
-            </Button>
+            </Button> */}
+
+
+
+            <TouchableOpacity
+              style={[styles.button]}
+              onPress={(e) => {
+                e.stopPropagation(); // Evita que se abra la playlist
+                handleCopyLink(item.enlace_compartir);
+              }}
+            >
+              <Text style={[styles.buttonText, { color: '#fff' }]}>Compartir</Text>
+            </TouchableOpacity>
+
           </CardActions>
         </Card>
       </TouchableOpacity>
@@ -153,21 +171,35 @@ export default function IndexScreen() {
     return (
       <SafeAreaProvider>
         <SafeAreaView style={styles.loadingContainer}>
-          <Text>Cargando tus playlists...</Text>
+          <Text style={styles.label}>Cargando tus playlists...</Text>
         </SafeAreaView>
       </SafeAreaProvider>
     );
   }
 
   return (
-    <SafeAreaProvider>
+    <SafeAreaProvider style={{ backgroundColor: '#161022' }}>
       <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.header}>
-          <Text style={styles.title}>Tus 🎬 Playlists</Text>
+          <Text style={styles.title}>FilmSave </Text>
           <Link href="/(modals)/create-list-modal" asChild>
-            <Button variant="contained">Nueva Lista</Button>
+
+            <TouchableOpacity
+              style={
+                styles.shareButton
+              }>
+              <Ionicons
+                name={'add'}
+                size={18}
+                color={'#ffffff'}
+              />
+              <Text style={styles.textBaseShare}>Crear nueva lista</Text>
+            </TouchableOpacity>
+
           </Link>
         </View>
+        <Text style={styles.title}>Mis Playlist de peliculas </Text>
+        <Text style={styles.subtitleText}>Crea y maneja tus colecciones personales de peliculas</Text>
 
         {playlist.length === 0 ? (
           <View style={styles.empty}>
@@ -189,13 +221,16 @@ export default function IndexScreen() {
     </SafeAreaProvider>
   );
 }
-
+const primaryColor = '#a18fc5';
+const successColor = '#a18fc5';
+const errorColor = '#a18fc5';
 const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     margin: 16,
+    backgroundColor: '#161022',
   },
   title: {
     fontSize: 22,
@@ -206,9 +241,17 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   loadingContainer: {
+    backgroundColor: '#2f2348',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    gap: 10,  
+  },
+    label: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 4,
   },
   empty: {
     flex: 1,
@@ -226,5 +269,179 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#666',
     marginTop: 4,
+  },
+  wrapper: {
+    flex: 1,
+    backgroundColor: '#161022',
+  },
+  scroll: {
+    flex: 1,
+  },
+  scrollContent: {
+    padding: 20,
+    paddingBottom: 100,
+  },
+  title: {
+    fontSize: 22,
+    color: '#ffffff',
+    fontWeight: 'bold',
+    marginBottom: 10
+  },
+  subtitleText: {
+    fontSize: 16,
+    color: '#a18fc5',
+    marginBottom: 20
+  },
+  searchWrapper:
+  {
+    flex: 1,
+    position: 'relative',
+    zIndex: 10,
+  },
+  resultsOverlay: {
+    position: 'absolute',  // Flota sobre el contenido
+    top: '100%',           // Se pone justo debajo del buscador
+    left: 0,
+    right: 0,
+    zIndex: 100,            // Se asegura de estar por encima de otros elementos
+    marginTop: 8,      // Un pequeño espacio
+    backgroundColor: '#2f2348', // Mismo color del buscador
+    color: 'white',
+
+  },
+  resultsScroll: {
+    maxHeight: 300,
+    overflowY: 'auto',
+    backgroundColor: '#2f2348',
+    color: '#fff'
+  },
+  subtitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginVertical: 16,
+    textAlign: 'center',
+    color: '#333',
+  },
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: 16,
+  },
+  card: {
+    width: 260,
+    borderRadius: 20,
+    backgroundColor: '#161022',
+  },
+  cardContent: {
+    padding: 12,
+  },
+  titleRow: {
+  },
+  movieTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    flexShrink: 1,
+    color: '#ffffff'
+
+  },
+  movieYear: {
+    fontSize: 14,
+    color: '#666',
+  },
+  buttonsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 10,
+    zIndex: 10,
+
+  },
+  buttons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between', // O 'space-around', o usa 'gap'
+    marginTop: 10,
+  },
+
+  // --- Estilos Base del Botón (simula outlined/small) ---
+  buttonBase: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderRadius: 4,
+    paddingVertical: 5, // Simula size="small"
+    paddingHorizontal: 10, // Simula size="small"
+    minWidth: 100, // Asegura que los botones tengan un ancho similar
+  },
+
+  shareButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 4,
+    paddingVertical: 10, // Simula size="small"
+    paddingHorizontal: 12, // Simula size="small"
+    minWidth: 100, // Asegura que los botones tengan un ancho similar
+    backgroundColor: '#5b13ec',
+  },
+
+  textBaseShare: {
+    fontSize: 14,
+    fontWeight: '500',
+    marginLeft: 6, // Espacio entre icono y texto
+    color: '#ffffff',
+
+  },
+
+  textBase: {
+    fontSize: 14,
+    fontWeight: '500',
+    marginLeft: 6, // Espacio entre icono y texto
+  },
+
+  // --- Estilos 'Primary' (No Vista) ---
+  buttonPrimary: {
+    borderColor: primaryColor,
+  },
+  textPrimary: {
+    color: primaryColor,
+  },
+
+  // --- Estilos 'Success' (Vista) ---
+  buttonSuccess: {
+    borderColor: successColor,
+  },
+  textSuccess: {
+    color: successColor,
+  },
+
+  // --- Estilos 'Error' (Eliminar) ---
+  buttonError: {
+    borderColor: errorColor,
+  },
+  textError: {
+    color: errorColor,
+  },
+
+
+  separator: {
+    height: 1, // Thickness of the line
+    width: '100%', // Full width
+    backgroundColor: '#2f2348', // Color of the line
+    marginVertical: 10, // Adjust vertical spacing as needed
+  },
+
+    buttonText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 16,
+  },
+    button: {
+    backgroundColor: '#563d61ff',
+    padding: 10,
+    
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 8,
   },
 });

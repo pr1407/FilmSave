@@ -76,7 +76,7 @@ export default function CompartirPlaylistModal() {
           '¡Enlace Generado!',
           'El enlace se copió automáticamente a tu portapapeles ✅'
         );
-      
+
       } catch (e) {
         console.error('Error al copiar automáticamente:', e);
         Alert.alert(
@@ -97,13 +97,11 @@ export default function CompartirPlaylistModal() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Compartir Playlist</Text>
-      <Text style={styles.subtitle}>Invita a otros usuarios para ver o editar esta lista.</Text>
-
+      <Text style={styles.title}>Invita a otros usuarios para ver o editar esta playlist.</Text>
       <Text style={styles.label}>Correo del colaborador</Text>
       <TextInput
         style={styles.input}
-        placeholder="ejemplo@correo.com"
+        placeholder="you@example.com"
         keyboardType="email-address"
         value={email}
         onChangeText={setEmail}
@@ -118,7 +116,7 @@ export default function CompartirPlaylistModal() {
           style={styles.picker}
         >
           {permisos.map((p) => (
-            <Picker.Item key={p.id} label={p.nombre} value={p.id} />
+            <Picker.Item key={p.id} label={p.nombre.charAt(0).toUpperCase() + p.nombre.slice(1)} value={p.id} />
           ))}
         </Picker>
       </View>
@@ -138,13 +136,11 @@ export default function CompartirPlaylistModal() {
           <Text style={styles.linkText} numberOfLines={1}>
             {linkGenerado}
           </Text>
-
           <TouchableOpacity style={styles.copyButton} onPress={handleCopyLink}>
             <Text style={styles.copyButtonText}>Copiar enlace</Text>
           </TouchableOpacity>
         </View>
       ) : null}
-
 
       <TouchableOpacity
         style={[styles.button, styles.closeButton]}
@@ -152,6 +148,7 @@ export default function CompartirPlaylistModal() {
       >
         <Text style={[styles.buttonText, { color: '#fff' }]}>Cerrar</Text>
       </TouchableOpacity>
+
     </View>
   );
 }
@@ -161,27 +158,34 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 24,
     justifyContent: 'center',
+    backgroundColor: '#161022',
   },
   title: {
     fontSize: 22,
     fontWeight: '700',
+    color: '#fff',
     textAlign: 'center',
     marginBottom: 8,
   },
   subtitle: {
+    color: '#fff',
     fontSize: 14,
-    color: '#555',
     textAlign: 'center',
     marginBottom: 20,
   },
   label: {
+    color: '#fff',
     fontSize: 14,
     fontWeight: '600',
     marginBottom: 4,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    height: 48,
+    width: '100%',
+    borderColor: '#2f2348',
+    backgroundColor: '#2f2348',
+    color: '#8171a3',
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: Platform.OS === 'ios' ? 12 : 8,
@@ -190,7 +194,7 @@ const styles = StyleSheet.create({
   },
   pickerContainer: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#2f2348',
     borderRadius: 8,
     overflow: 'hidden',
     marginBottom: 16,
@@ -198,9 +202,12 @@ const styles = StyleSheet.create({
   picker: {
     height: 48,
     width: '100%',
+    backgroundColor: '#2f2348',
+    color: '#8171a3',
+    borderRadius: 8,
   },
   button: {
-    backgroundColor: '#014de1',
+    backgroundColor: '#563d61ff',
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: 'center',
@@ -214,7 +221,7 @@ const styles = StyleSheet.create({
   linkBox: {
     marginTop: 20,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#563d61ff',
     padding: 12,
     borderRadius: 8,
   },
@@ -234,7 +241,14 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   closeButton: {
-    backgroundColor: '#c62828',
+    backgroundColor: '#563d61ff',
     marginTop: 16,
   },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 2,
+    marginTop: 10,
+  },
+
 });

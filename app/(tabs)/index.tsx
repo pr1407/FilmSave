@@ -204,6 +204,7 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   loadingContainer: {
+    backgroundColor: '#2f2348',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

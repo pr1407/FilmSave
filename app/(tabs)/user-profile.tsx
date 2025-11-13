@@ -16,8 +16,6 @@ export default function UserProfileScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>Mi Perfil</Text>
       <Text style={styles.text}>Hola, esta es tu página de perfil.</Text>
-      
-      {/* Puedes mover el botón de logout de la barra superior aquí si prefieres */}
       <Button
         title="Cerrar Sesión"
         onPress={handleLogout}
@@ -31,7 +29,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 24,
-    backgroundColor: '#fff',
+    backgroundColor: '#161022',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -39,9 +37,12 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+    color: '#fff',
   },
   text: {
     fontSize: 16,
     marginBottom: 40,
+    color: '#fff',
+
   },
 });

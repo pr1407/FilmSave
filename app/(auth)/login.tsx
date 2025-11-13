@@ -38,55 +38,69 @@ export default function LoginScreen() {
   return (
     <View style={styles.container}>
       {/* Puedes poner tu logo aquí */}
-      <Image 
-        source={require('../../assets/images/icon.png')} // Ajusta la ruta a tu logo
-        style={styles.logo}
-      />
-      
-      <Text style={styles.title}>Iniciar Sesión</Text>
-      
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        placeholderTextColor="#888"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Contraseña"
-        placeholderTextColor="#888"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-        autoCapitalize="none"
-      />
 
-      {/* Botón primario mejorado */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={handleLogin}
-        disabled={loading}
-      >
-        {loading ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.buttonText}>Entrar</Text>
-        )}
-      </TouchableOpacity>
+      <View style={styles.containerModule}>
+        <Image
+          source={require('../../assets/images/icon.png')} // Ajusta la ruta a tu logo
+          style={styles.logo}
+        />
+        <Text style={styles.title}>Bienvenido a FilmSave</Text>
+        <Text style={styles.subtitle}>Inicie sesion para continuar registrando sus playlist</Text>
+      </View>
+      <View style={styles.modalContainer}>
+        <View  >
+          <Text style={styles.subtitleInput}>Email</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="you@example.com"
+            placeholderTextColor="#888"
+            keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+          />
+        </View>
+        <View >
+          <Text style={styles.subtitleInput}>Contraseña</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="********"
+            placeholderTextColor="#888"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+            autoCapitalize="none"
+          />
+        </View>
 
-      {/* Botón secundario mejorado */}
+        {/* Botón primario mejorado */}
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleLogin}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Entrar</Text>
+          )}
+        </TouchableOpacity>
+
+        {/* Botón secundario mejorado */}
+
+      </View>
+
       <Pressable
         style={styles.secondaryButton}
         onPress={() => router.push('/(auth)/signup')}
         disabled={loading}
       >
-        <Text style={styles.secondaryButtonText}>
-          ¿No tienes cuenta? Regístrate
+        <Text >
+          ¿No tienes cuenta? <Text style={styles.secondaryButtonText}>Regístrate</Text>
         </Text>
       </Pressable>
+
+
     </View>
   );
 }
@@ -95,8 +109,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 24,
-    backgroundColor: '#fff', // Fondo blanco limpio
+    backgroundColor: '#f3f4f6', // Fondo blanco limpio
   },
+
+  containerModule: {
+    justifyContent: 'center',
+    backgroundColor: '#f3f4f6',
+    padding: 20// Fondo blanco limpio
+  },
+
   logo: {
     width: 100,
     height: 100,
@@ -107,23 +128,36 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 30,
     textAlign: 'center',
     color: '#111',
   },
+  subtitle: {
+    fontSize: 16,
+    marginBottom: 20,
+    textAlign: 'center',
+    color: '#6b7280',
+  },
+
+  subtitleInput: {
+    fontSize: 16,
+    color: '#374151',
+    paddingBottom: 10,
+  },
+
   input: {
     height: 50,
-    borderColor: '#ddd',
+    borderColor: '#d1d5db',
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 15,
     marginBottom: 15,
-    backgroundColor: '#f9f9f9', // Ligero color de fondo
+    backgroundColor: '#f9fafb', // Ligero color de fondo
     fontSize: 16,
+
   },
   // Estilo para el botón primario
   button: {
-    backgroundColor: '#007AFF', // Color azul primario
+    backgroundColor: '#6366f1', // Color azul primario
     height: 50,
     borderRadius: 8,
     justifyContent: 'center',
@@ -141,7 +175,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   secondaryButtonText: {
-    color: '#007AFF',
+    color: '#6366f1',
     fontSize: 16,
+    fontWeight: 'bold',
   },
+
+  modalContainer: {
+    backgroundColor: '#ffffff', // Color azul primario
+    paddingHorizontal: 20,
+    paddingVertical: 30,
+    borderRadius: 12,
+  }
 });
