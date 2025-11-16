@@ -1,17 +1,16 @@
+import { ButtonWithIcon } from '@/components/ButtonWithIcon';
 import { getUserPlaylists } from '@/services/api';
 import { getSession } from '@/services/auth';
-import { Ionicons } from '@expo/vector-icons';
 import {
-  Button,
   Card,
   CardActions,
   CardContent,
   LinearProgress,
-  Typography,
+  Typography
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import * as Clipboard from 'expo-clipboard';
-import { Link, useFocusEffect, useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import {
   Alert,
@@ -149,18 +148,15 @@ export default function IndexScreen() {
               Compartir
             </Button> */}
 
-
-
-            <TouchableOpacity
-              style={[styles.button]}
-              onPress={(e) => {
+            <ButtonWithIcon
+              title='Compartir'
+              onPress={(e) => { // <-- 1. Envuelve todo en (e) => { ... }
                 e.stopPropagation(); // Evita que se abra la playlist
                 handleCopyLink(item.enlace_compartir);
               }}
-            >
-              <Text style={[styles.buttonText, { color: '#fff' }]}>Compartir</Text>
-            </TouchableOpacity>
-
+              iconName='share'
+              variant='secondary'
+            />
           </CardActions>
         </Card>
       </TouchableOpacity>
@@ -177,30 +173,32 @@ export default function IndexScreen() {
     );
   }
 
+const handleCreateList = () => {
+  // Aquí puedes poner tu lógica, por ejemplo:
+  router.push("/(modals)/create-list-modal");
+  // O quizás:
+  // Alert.alert("Crear", "Listo para crear!");
+  console.log("Creando nueva lista...");
+};
+
+
   return (
     <SafeAreaProvider style={{ backgroundColor: '#161022' }}>
       <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.header}>
           <Text style={styles.title}>FilmSave </Text>
-          <Link href="/(modals)/create-list-modal" asChild>
-
-            <TouchableOpacity
-              style={
-                styles.shareButton
-              }>
-              <Ionicons
-                name={'add'}
-                size={18}
-                color={'#ffffff'}
-              />
-              <Text style={styles.textBaseShare}>Crear nueva lista</Text>
-            </TouchableOpacity>
-
-          </Link>
         </View>
-        <Text style={styles.title}>Mis Playlist de peliculas </Text>
-        <Text style={styles.subtitleText}>Crea y maneja tus colecciones personales de peliculas</Text>
-
+        <View style={styles.subheader}>
+          <Text style={styles.title}>Mis Playlist de peliculas </Text>
+          <Text style={styles.subtitleText}>Crea y maneja tus colecciones personales de peliculas</Text>
+        </View>
+        <View style={styles.header}>
+            <ButtonWithIcon
+              title="Crear nueva lista"
+              onPress={handleCreateList}
+              iconName="add"
+            />
+        </View>
         {playlist.length === 0 ? (
           <View style={styles.empty}>
             <Text style={{ color: '#777', fontSize: 16 }}>
@@ -232,6 +230,12 @@ const styles = StyleSheet.create({
     margin: 16,
     backgroundColor: '#161022',
   },
+
+  subheader: {
+    margin: 16,
+    backgroundColor: '#161022',
+  },
+
   title: {
     fontSize: 22,
     fontWeight: 'bold',
@@ -245,9 +249,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 10,  
+    gap: 10,
   },
-    label: {
+  label: {
     color: '#fff',
     fontSize: 14,
     fontWeight: '600',
@@ -431,15 +435,15 @@ const styles = StyleSheet.create({
     marginVertical: 10, // Adjust vertical spacing as needed
   },
 
-    buttonText: {
+  buttonText: {
     color: '#fff',
     fontWeight: '600',
     fontSize: 16,
   },
-    button: {
+  button: {
     backgroundColor: '#563d61ff',
     padding: 10,
-    
+
     borderRadius: 8,
     alignItems: 'center',
     marginTop: 8,

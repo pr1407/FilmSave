@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { StyleSheet, TextInput, Button, Alert, Platform, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router';
-import { View, Text } from '@/components/Themed';
+import { ButtonWithIcon } from '@/components/ButtonWithIcon';
+import { Text, View } from '@/components/Themed';
 import { createPlaylist } from '@/services/api';
+import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { Alert, Platform, StyleSheet, TextInput } from 'react-native';
 import { supabase } from '../../services/supabase';
 
 export default function CreateListScreen() {
@@ -54,13 +55,12 @@ export default function CreateListScreen() {
         onChangeText={setDescripcion}
         multiline
       />
-
-      <TouchableOpacity
-        style={styles.button}
+      <ButtonWithIcon
+        title='Crear Lista'
         onPress={handleCreateList}
-      >
-        <Text style={[styles.buttonText, { color: '#fff' }]}>Crear Lista</Text>
-      </TouchableOpacity>
+      />
+                                        
+
 
     </View>
   );

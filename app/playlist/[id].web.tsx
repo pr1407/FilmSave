@@ -1,37 +1,37 @@
-import React, { useEffect, useState } from 'react';
 import {
-    View,
-    Text,
-    StyleSheet,
-    ActivityIndicator,
-    ScrollView,
-    Alert,
-    TouchableOpacity, // 👈 Importar Alert para los mensajes
-} from 'react-native';
-import { useLocalSearchParams, useRouter, Link } from 'expo-router'; // 👈 Importar useRouter
+    addMovie,
+    addMovieToPlaylist,
+    deleteMovieFromPlaylist,
+    getMovieByImdbId,
+    getMoviesInPlaylist,
+    getPlaylistByShareLink,
+    searchMovies,
+    updateMovieStatus,
+    validatePermission
+} from '@/services/api';
 import {
-    TextField,
-    Button,
+    Card,
+    CardContent,
+    CardMedia,
     List, // 'Link' de MUI no se usa, usamos el de expo-router
     ListItem,
     ListItemText,
-    Card,
-    CardMedia,
-    CardContent,
     Paper,
+    TextField
 } from '@mui/material';
+import { useLocalSearchParams, useRouter } from 'expo-router'; // 👈 Importar useRouter
+import React, { useEffect, useState } from 'react';
 import {
-    searchMovies,
-    getPlaylistByShareLink,
-    getMoviesInPlaylist,
-    getMovieByImdbId,
-    addMovie,
-    addMovieToPlaylist,
-    updateMovieStatus,
-    deleteMovieFromPlaylist,
-    validatePermission
-} from '@/services/api';
+    ActivityIndicator,
+    Alert,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 // 👈 Importar funciones de auth
+import { ButtonWithIcon } from '@/components/ButtonWithIcon';
 import { getSession } from '@/services/auth';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -46,24 +46,20 @@ export default function PlaylistDetail() {
     const [results, setResults] = useState<any[]>([]);
     const [movies, setMovies] = useState<any[]>([]);
 
-    // 👇 Estado para guardar el permiso
     const [permission, setPermission] = useState<any | false>(false);
 
     useEffect(() => {
-        // 1. Renombramos la función a una que valide y luego cargue
         const checkAccessAndFetchData = async () => {
             setLoading(true);
             const shareId = Array.isArray(id) ? id[0] : (id as string);
 
             try {
-                // 2. Obtener el usuario actual
                 const { session } = await getSession();
                 const userId = session?.user?.id;
                 if (!userId) {
                     throw new Error('No hay sesión de usuario.');
                 }
 
-                // 3. Obtener la playlist por el link de compartir
                 const { data: playlistData, error: playlistError } = await getPlaylistByShareLink(shareId);
 
                 if (playlistError || !playlistData) {
@@ -81,10 +77,8 @@ export default function PlaylistDetail() {
                     }
                 }
 
-                // --- 5. SI TIENE PERMISO, CONTINUAR CARGANDO ---
                 setPlaylist(playlistData);
 
-                // Cargar las películas de la lista
                 const { data: moviesData } = await getMoviesInPlaylist(playlistData.id);
                 setMovies(moviesData || []);
 
@@ -93,7 +87,7 @@ export default function PlaylistDetail() {
                     'Acceso Denegado',
                     error.message || 'No se pudo cargar la playlist.'
                 );
-                router.replace('/(tabs)'); // 👈 Redirigir al inicio
+                router.replace('/(tabs)');
             } finally {
                 setLoading(false);
             }
@@ -102,9 +96,8 @@ export default function PlaylistDetail() {
         if (id) {
             checkAccessAndFetchData();
         }
-    }, [id, router]); // 👈 Añadir router a las dependencias
+    }, [id, router]);
 
-    // 🔍 Buscar películas (sin cambios)
     const handleSearch = async (text: string) => {
         setQuery(text);
         if (text.length < 3) {
@@ -115,7 +108,6 @@ export default function PlaylistDetail() {
         setResults(movies);
     };
 
-    // ➕ Agregar película (sin cambios)
     const handleAdd = async (movie: any) => {
         // ... (lógica existente sin cambios)
         const alreadyInList = movies.some(
@@ -167,14 +159,18 @@ export default function PlaylistDetail() {
         setMovies((prev) => prev.filter((m) => m.peliculas.imdb_id !== imdbId));
     };
 
+    const sharePlaylist = async (playlistId: string) => {
+        router.push(`/(modals)/compartir-playlist-modal?id=$/${playlistId}`)
+    }
+
 
     // --- RENDERIZADO ---
 
     if (loading) {
         return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#161022' }}>
                 <ActivityIndicator size="large" />
-                <Text>Verificando permisos...</Text>
+                <Text style={{ color: "#ffffff" }}>Verificando permisos...</Text>
             </View>
         );
     }
@@ -215,6 +211,9 @@ export default function PlaylistDetail() {
                                     '& .MuiInputLabel-root': {
                                         color: '#8171a3', // Color del label en estado normal
                                         fontSize: '0.9rem',
+                                    },
+                                    '& .MuiInputBase-input': {
+                                        color: '#ffffff',  
                                     },
                                 }}
                             />
@@ -262,18 +261,12 @@ export default function PlaylistDetail() {
                     )}
 
                     {(permission === 'owner' || permission === 2) && (
-                        <Link href={`/(modals)/compartir-playlist-modal?id=${playlist.id}`} asChild>
-                            <TouchableOpacity
-                                style={
-                                    styles.shareButton
-                                }>
-                                <Ionicons
-                                    name={'share'}
-                                    size={18}
-                                />
-                                <Text style={styles.textBaseShare}>Compartir</Text>
-                            </TouchableOpacity>
-                        </Link>
+                            <ButtonWithIcon 
+                                title='Compartir'
+                                iconName='share'
+                                onPress={() => sharePlaylist(playlist.id)}
+                            />
+
                     )}
                 </View>
 

@@ -1,39 +1,38 @@
-import React, { useEffect, useState } from 'react';
 import {
-    View,
-    Text,
-    StyleSheet,
-    ActivityIndicator,
-    ScrollView,
-    Alert,
-    TouchableOpacity, // 👈 Importar Alert para los mensajes
-} from 'react-native';
-import { useLocalSearchParams, useRouter, Link } from 'expo-router'; // 👈 Importar useRouter
+    addMovie,
+    addMovieToPlaylist,
+    deleteMovieFromPlaylist,
+    getMovieByImdbId,
+    getMoviesInPlaylist,
+    getPlaylistByShareLink,
+    searchMovies,
+    updateMovieStatus,
+    validatePermission
+} from '@/services/api';
 import {
-    TextField,
     Button,
+    Card,
+    CardContent,
+    CardMedia,
     List, // 'Link' de MUI no se usa, usamos el de expo-router
     ListItem,
     ListItemText,
-    Card,
-    CardMedia,
-    CardContent,
     Paper,
+    TextField,
 } from '@mui/material';
+import { Link, useLocalSearchParams, useRouter } from 'expo-router'; // 👈 Importar useRouter
+import React, { useEffect, useState } from 'react';
 import {
-    searchMovies,
-    getPlaylistByShareLink,
-    getMoviesInPlaylist,
-    getMovieByImdbId,
-    addMovie,
-    addMovieToPlaylist,
-    updateMovieStatus,
-    deleteMovieFromPlaylist,
-    validatePermission
-} from '@/services/api';
+    ActivityIndicator,
+    Alert,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View
+} from 'react-native';
 // 👈 Importar funciones de auth
+import { ButtonWithIcon } from '@/components/ButtonWithIcon';
 import { getSession } from '@/services/auth';
-import { Ionicons } from '@expo/vector-icons';
 
 export default function PlaylistDetail() {
     const { id } = useLocalSearchParams();
@@ -170,9 +169,9 @@ export default function PlaylistDetail() {
 
     if (loading) {
         return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#161022'}}>
                 <ActivityIndicator size="large" />
-                <Text>Verificando permisos...</Text>
+                <Text style={{color: "#ffffff"}}>Verificando permisos...</Text>
             </View>
         );
     }
@@ -262,51 +261,19 @@ export default function PlaylistDetail() {
                                 <View style={styles.buttons}>
                                     {/* --- Botón de Visto/No Visto --- */}
                                     {(permission === 'owner' || permission === 2) && (
-                                        <TouchableOpacity
-                                            // Estilos condicionales
-                                            style={[
-                                                styles.buttonBase,
-                                                movie.status ? styles.buttonSuccess : styles.buttonPrimary
-                                            ]}
-                                            onPress={() =>
-                                                handleToggleStatus(movie.peliculas.imdb_id, movie.status)
-                                            }
-                                        >
-                                            {/* 1. Icono */}
-                                            <Ionicons
-                                                // Corregí 'eye' y 'eyeOff' a los nombres de string correctos
-                                                name={movie.status ? 'eye' : 'eye-off'}
-                                                size={18}
-                                                color={movie.status ? styles.textSuccess.color : styles.textPrimary.color}
-                                            />
-                                            {/* 2. Texto */}
-                                            <Text
-                                                style={[
-                                                    styles.textBase,
-                                                    movie.status ? styles.textSuccess : styles.textPrimary
-                                                ]}
-                                            >
-                                                {movie.status ? ' Vista' : ' No vista'}
-                                            </Text>
-                                        </TouchableOpacity>
-                                    )}
 
-                                    {/* --- Botón de Eliminar --- */}
+                                        <ButtonWithIcon
+                                            title={movie.status ? ' Vista' : ' No vista'}
+                                            iconName={movie.status ? 'eye' : 'eye-off'}
+                                            onPress={() => handleToggleStatus(movie.peliculas.imdb_id, movie.status)}
+                                        />
+                                    )}
                                     {(permission === 'owner' || permission === 2) && (
-                                        <TouchableOpacity
-                                            style={[styles.buttonBase, styles.buttonError]}
+                                        <ButtonWithIcon
+                                            title={"Eliminar"}
+                                            iconName={"trash-outline"}
                                             onPress={() => handleDelete(movie.peliculas.imdb_id)}
-                                        >
-                                            {/* Añadí un icono para consistencia */}
-                                            <Ionicons
-                                                name="trash-outline"
-                                                size={18}
-                                                color={styles.textError.color}
-                                            />
-                                            <Text style={[styles.textBase, styles.textError]}>
-                                                {' Eliminar'}
-                                            </Text>
-                                        </TouchableOpacity>
+                                        />
                                     )}
                                 </View>
                             </CardContent>
@@ -396,7 +363,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
         // Añade 'gap: 10,' si quieres espacio entre botones
     },
-    
+
     // --- Estilos Base del Botón (simula outlined/small) ---
     buttonBase: {
         flexDirection: 'row',

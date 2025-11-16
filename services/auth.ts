@@ -1,5 +1,5 @@
+import { Session, User } from '@supabase/supabase-js'; // Importar tipo de sesión
 import { supabase } from './supabase';
-import { Session } from '@supabase/supabase-js'; // Importar tipo de sesión
 export { supabase };
 export const signInWithEmail = async (email: string, password: string): Promise<{ session: Session | null; error: any }> => {
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
@@ -20,3 +20,8 @@ export const getSession = async (): Promise<{ session: Session | null; error: an
   const { data: { session }, error } = await supabase.auth.getSession();
   return { session, error };
 };
+
+export const deleteUser = async (idUser: string): Promise<{user: User | null ; error: any}> => {
+  const { data, error } = await supabase.auth.admin.deleteUser(idUser)
+  return {user: data.user , error};
+}

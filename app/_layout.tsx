@@ -1,19 +1,19 @@
+import { useColorScheme } from '@/components/useColorScheme';
+import { Ionicons } from '@expo/vector-icons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { Session } from '@supabase/supabase-js';
 import { useFonts } from 'expo-font';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
-import 'react-native-reanimated';
-import { Session } from '@supabase/supabase-js';
+import { Alert, Image, TouchableOpacity } from 'react-native';
 import 'react-native-get-random-values';
-import { useColorScheme } from '@/components/useColorScheme';
-import { getSession, supabase, signOut } from '../services/auth';
-import { TouchableOpacity, Alert, Image } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import 'react-native-reanimated';
+import { getSession, signOut, supabase } from '../services/auth';
 
 export {
-  ErrorBoundary,
+  ErrorBoundary
 } from 'expo-router';
 
 export const unstable_settings = {
@@ -111,11 +111,6 @@ function RootLayoutNav() {
           ),
         }}
       >
-        {/* --- 👇 AQUÍ ESTÁ LA CORRECCIÓN --- */}
-        {/*
-          Define los GRUPOS (las carpetas), no los archivos dentro de ellos.
-          Las opciones aquí anulan el 'screenOptions' global para todo el grupo.
-        */}
         <Stack.Screen
           name="(tabs)" // El grupo de tus pestañas principales
           options={{ headerShown: false }} // Oculta el navbar en (tabs)
@@ -128,16 +123,12 @@ function RootLayoutNav() {
           name="(modals)" // El grupo de modales
           options={{
             presentation: 'modal',
-            // Opcional: si quieres que los modales tengan el navbar:
-            // title: 'Modal', 
-
-            // Opcional: si quieres que NO tengan navbar:
             headerShown: false,
           }}
         />
 
-        <Stack.Screen name="playlist/[id]" />
-        <Stack.Screen name="invite/[id]" />
+        <Stack.Screen name="playlist/[id]" options={{ headerShown: false }} />
+        <Stack.Screen name="invite/[id]"  options={{ headerShown: false }}/>
 
 
       </Stack>
